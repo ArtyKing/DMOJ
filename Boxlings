@@ -1,0 +1,72 @@
+//https://dmoj.ca/problem/boxl
+#include <bits/stdc++.h>
+using namespace std;
+#define INF 0x3f3f3f3f
+#define LINF 0x3f3f3f3f3f3f3f3f
+#define pb push_back
+#define endl "\n"
+#define TRACE(x) cerr << #x << " = " << x << endl
+#define set(arr, x) memset(arr, x, sizeof(arr))
+#define copy(start, dest) memcpy(dest, start, sizeof(start));
+typedef long long ll;
+typedef unsigned long long ull;
+typedef pair<int, int> pii;
+
+const int maxN = 1e6+1,  mod = 1e9+7;
+
+struct BIT{
+    int bit[maxN];
+    void update(int idx, int val){for(int i = idx; i < maxN; i+=i&-i) bit[i]+=val;}
+    int q(int x){
+        int sum = 0;
+        for(int i = x; i > 0; i-=i&-i) sum+=bit[i];
+        return sum;
+    }
+    int query(int l, int r){
+        if(l > r) swap(l, r);
+        if(l <= 0 || r > maxN) return -INF;
+        return q(r)-q(l-1);
+    }
+}bit;
+
+struct Event{
+    int x, y1, y2, val;
+};
+bool cmp(Event a, Event b){
+    return a.x < b.x || (a.x == b.x && a.val < b.val);
+}
+map<int, int> cc;
+int32_t main(void) {
+    cin.tie(0)->sync_with_stdio(0);
+    int n, m; cin >> n >> m; vector<Event> v;
+    for(int i = 0; i < n; i++){
+        int x1, y1, x2, y2; cin >> x1 >> y1 >> x2 >> y2;
+        cc[y1] = 0; cc[y2+1] = 0;
+        v.pb({x1, y1, y2+1, -1});
+        v.pb({x2, y1, y2+1, 1});
+    }
+    for(int i = 0; i < m; i++){
+        int x, y; cin >> x >> y; cc[y] = 0;
+        v.pb({x, y, -1, 0});
+    }
+    int cnt = 1;
+    for(auto &i:cc){
+        i.second=cnt++;
+    }
+    sort(v.begin(), v.end(), cmp);
+    int ans = 0;
+    for(auto i:v){
+        if(i.val == -1){
+            bit.update(cc[i.y1], 1);
+            bit.update(cc[i.y2], -1);
+        }
+        else if(i.val == 1){
+            bit.update(cc[i.y1], -1);
+            bit.update(cc[i.y2], 1);
+        }
+        else{
+            if(bit.q(cc[i.y1]) >= 1) ans++;
+        }
+    }
+    cout << ans << endl;
+}
