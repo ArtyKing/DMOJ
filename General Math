@@ -1,0 +1,55 @@
+//Prime Factorization -- O(√n)
+vector<int> getPrimeFactors(int n){
+    vector<int> ans; int cur = n;
+    for(int i = 2; i*i <= n; i++){
+        while(cur%i==0) {
+            cur/=i; ans.push_back(i);
+        }
+    }
+    return ans;
+}
+//Factorial - O(n)
+ll fact(int n) {
+    ll cur = 1;
+    for(int i = 2; i <= n; i++){
+        cur*=i;
+    }
+    return cur;
+}
+//Prime Checking -- O(√n)
+bool isPrime(ll n){
+    for(ll i = 2; i*i <= n; i++){
+        if(n%i==0) return false;
+    }
+    return true;
+}
+//GCD/LCM -- O(logn)
+inline ll gcd(ll a, ll b) {return b == 0 ? a:gcd(b, a%b);}
+inline ll lcm(ll a, ll b) {return a*b/gcd(a, b);}
+//Fast Power [Mod] -- O(logn)
+ll fastPow(ll base, ll exp){
+    if(exp == 0) return 1;
+    ll t = fastPow(base, exp/2)%mod;
+    t = t*t%mod;
+    return exp&1 ? t*base%mod : t;
+}
+//N choose M [Mod] (Requires Fast Power) -- O(n) init, O(logn) query
+ll fact[maxN+1], invFact[maxN+1];
+ll inverse(ll n){
+    return fastPow(n, mod-2);
+}
+void pfactorial(){
+    fact[0] = 1;
+    for(int i = 1; i <= maxN; i++){
+        fact[i] = i*fact[i-1]%mod;
+    }
+}
+void pinverse(){
+    invFact[0] = 1;
+    for(int i = 1; i <= maxN; i++){
+        invFact[i] = inverse(fact[i]);
+    }
+}
+ll choose(ll n, ll k){
+    return fact[n]*invFact[k]%mod*invFact[n-k]%mod;
+}
