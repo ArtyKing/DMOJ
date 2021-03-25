@@ -1,0 +1,49 @@
+struct segT{
+#define lc (idx<<1)
+#define rc (idx<<1|1)
+    struct Node{
+        int l, r, v;
+    }seg[maxN*4];
+    void push_up(int idx){
+        seg[idx].v = min(seg[lc].v, seg[rc].v);
+        //Update values here
+    }
+    void build(int l, int r, int idx){
+        seg[idx].l = l; seg[idx].r = r;
+        if(l == r) {
+            seg[idx].v = a[l]; //Initialize values here
+            return;
+        }
+        int mid = (l+r)/2;
+        build(l, mid, lc);
+        build(mid+1, r, rc);
+        push_up(idx);
+    }
+    void update(int pos, int v, int idx){
+        if(seg[idx].l == pos && seg[idx].r == pos){
+            seg[idx].v = v;
+            //Update values here
+            return;
+        }
+        int mid = (seg[idx].r+seg[idx].l)/2;
+        if(pos <= mid){
+            update(pos, v, lc);
+        }
+        else update(pos, v,rc);
+        push_up(idx);
+    }
+    int query(int l, int r, int idx){
+        if(seg[idx].l == l && seg[idx].r == r) return seg[idx].v;
+        int mid = (seg[idx].l+seg[idx].r)/2;
+        if(r <= mid){
+            return query(l, r, lc);
+        }
+        else if(l > mid){
+            return query(l, r, rc);
+        }
+        else{
+            //Update operation here
+            return min(query(l, mid, lc), query(mid+1, r, rc));
+        }
+    }
+}segTree;
