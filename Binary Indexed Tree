@@ -1,0 +1,14 @@
+struct BIT{
+    int bit[maxN];
+    void update(int idx, int val){for(int i = idx; i < maxN; i+=i&-i) bit[i]+=val;}
+    int q(int x){
+        int sum = 0;
+        for(int i = x; i > 0; i-=i&-i) sum+=bit[i];
+        return sum;
+    }
+    int query(int l, int r){
+        if(l > r) swap(l, r);
+        if(l <= 0 || r > maxN) return -INF;
+        return q(r)-q(l-1);
+    }
+}bit;
